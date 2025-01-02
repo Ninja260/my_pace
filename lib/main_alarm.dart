@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:io';
-// import 'dart:isolate';
 import 'dart:ui';
 
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
@@ -16,21 +15,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await initializeService();
-  // registerSendPortInIsolateNameServer();
-
-  // await AndroidAlarmManager.initialize();
 
   runApp(const MainApp());
-
-  /*  final int helloAlarmID = 0;
-  await AndroidAlarmManager.periodic(
-    const Duration(seconds: 30),
-    helloAlarmID,
-    printHello,
-    allowWhileIdle: true,
-    exact: true,
-    rescheduleOnReboot: true,
-  ); */
 }
 
 Future<void> initializeService() async {
@@ -167,10 +153,3 @@ Future<void> onStart(ServiceInstance service) async {
 
   statusTracker.start();
 }
-
-/* @pragma('vm:entry-point')
-void printHello() {
-  final DateTime now = DateTime.now();
-  final int isolateId = Isolate.current.hashCode;
-  debugPrint("[$now] Hello, world! isolate=$isolateId function='$printHello'");
-} */

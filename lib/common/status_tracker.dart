@@ -142,6 +142,8 @@ const String isolateName = 'serviceIsolate';
 ReceivePort receivePort = ReceivePort();
 
 void _registerSendPortInIsolateNameServer() {
+  debugPrint('Hash: ${receivePort.hashCode}');
+  IsolateNameServer.removePortNameMapping(isolateName);
   IsolateNameServer.registerPortWithName(
     receivePort.sendPort,
     isolateName,
@@ -150,10 +152,9 @@ void _registerSendPortInIsolateNameServer() {
 
 class StatusTrackerUsesAlarmManager extends ChangeNotifier
     implements StatusTrackerForServiceInterface {
-
   StatusTrackerUsesAlarmManager() {
     _registerSendPortInIsolateNameServer();
-    _streamSubscription =  receivePort.listen((message) {
+    _streamSubscription = receivePort.listen((message) {
       if (message == 'coding') {
         _startCoding();
       } else if (message == 'break') {
@@ -210,6 +211,7 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
     _audioPlayer?.stop();
     _cancelAlarms();
     _streamSubscription?.cancel();
+    receivePort.close();
   }
 
   Future<void> _startCoding() async {
@@ -271,18 +273,20 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
     }
   }
 
-  static SendPort? sendToServicePort;
-
   @pragma('vm:entry-point')
   static void triggerCoding() {
-    sendToServicePort ??= IsolateNameServer.lookupPortByName(isolateName);
+    SendPort? sendToServicePort =
+        IsolateNameServer.lookupPortByName(isolateName);
+    debugPrint('Hash1: ${sendToServicePort.hashCode}');
     sendToServicePort?.send('coding');
     debugPrint('triggerCoding');
   }
 
   @pragma('vm:entry-point')
   static void triggerBreak() {
-    sendToServicePort ??= IsolateNameServer.lookupPortByName(isolateName);
+    SendPort? sendToServicePort =
+        IsolateNameServer.lookupPortByName(isolateName);
+    debugPrint('Hash2: ${sendToServicePort.hashCode}');
     sendToServicePort?.send('break');
     debugPrint('triggerBreak');
   }
