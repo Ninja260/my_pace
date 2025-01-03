@@ -142,7 +142,6 @@ const String isolateName = 'serviceIsolate';
 ReceivePort receivePort = ReceivePort();
 
 void _registerSendPortInIsolateNameServer() {
-  debugPrint('Hash: ${receivePort.hashCode}');
   IsolateNameServer.removePortNameMapping(isolateName);
   IsolateNameServer.registerPortWithName(
     receivePort.sendPort,
@@ -191,7 +190,6 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
   void start() {
     Permission.scheduleExactAlarm.status.then((status) {
       _exactAlarmPermissionStatus = status;
-      debugPrint('exactAlarmPermissionStatus: $_exactAlarmPermissionStatus');
 
       if (_exactAlarmPermissionStatus == PermissionStatus.granted) {
         _initAudioPlayer();
@@ -251,7 +249,6 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
     required String status,
   }) {
     if (status == 'coding') {
-      debugPrint('schedule coding at $time');
       AndroidAlarmManager.oneShotAt(
         time,
         0,
@@ -261,7 +258,6 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
         wakeup: true,
       );
     } else if (status == 'break') {
-      debugPrint('schedule break at $time');
       AndroidAlarmManager.oneShotAt(
         time,
         1,
@@ -277,18 +273,14 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
   static void triggerCoding() {
     SendPort? sendToServicePort =
         IsolateNameServer.lookupPortByName(isolateName);
-    debugPrint('Hash1: ${sendToServicePort.hashCode}');
     sendToServicePort?.send('coding');
-    debugPrint('triggerCoding');
   }
 
   @pragma('vm:entry-point')
   static void triggerBreak() {
     SendPort? sendToServicePort =
         IsolateNameServer.lookupPortByName(isolateName);
-    debugPrint('Hash2: ${sendToServicePort.hashCode}');
     sendToServicePort?.send('break');
-    debugPrint('triggerBreak');
   }
 
   void _initAudioPlayer() {

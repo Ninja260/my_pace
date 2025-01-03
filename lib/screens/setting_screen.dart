@@ -70,7 +70,7 @@ class _SettingScreenState extends State<SettingScreen> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Form(
             key: _formKey,
             autovalidateMode: AutovalidateMode.always,

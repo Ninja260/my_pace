@@ -35,16 +35,53 @@ class _LogScreenState extends State<LogScreen> {
             List<StatusLog> statusLogs = statusTracker.statusLogs;
             int itemCount = statusLogs.length;
 
+            DateTime? lastDateTime;
+
             return ListView.builder(
               itemCount: itemCount,
               itemBuilder: (context, index) {
-                return ListTile(
-                  key: ValueKey(statusLogs[index].time),
-                  leading: Text(
-                    statusLogs[index].status.shortText,
+                String escapedMinutes = '';
+                if (lastDateTime != null) {
+                  escapedMinutes = (statusLogs[index]
+                          .time
+                          .difference(lastDateTime!)
+                          .inMinutes)
+                      .toString();
+                }
+                lastDateTime = statusLogs[index].time;
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 8.0,
                   ),
-                  trailing: Text(
-                    statusLogs[index].time.toString().split('.')[0],
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          text: statusLogs[index].status.shortText,
+                          style: TextStyle(
+                            color: Colors.black,
+                          ),
+                          children: <TextSpan>[
+                            if (escapedMinutes.isNotEmpty)
+                              TextSpan(
+                                text: '  +$escapedMinutes min',
+                                style: TextStyle(
+                                  color: Colors.green,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                      Text(
+                        statusLogs[index].time.toString().split('.')[0],
+                        style: TextStyle(
+                          color: Colors.black54,
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },
