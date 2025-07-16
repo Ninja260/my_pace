@@ -12,11 +12,11 @@ enum Status {
       case Status.needStart:
         return "Let's start coding!";
       case Status.coding:
-        return 'Coding...';
+        return 'Coding';
       case Status.shortBreak:
-        return 'Taking a break...';
+        return 'Taking a break';
       case Status.longBreak:
-        return 'Taking a long break...';
+        return 'Taking a long break';
     }
   }
 
@@ -33,3 +33,4 @@ enum Status {
     }
   }
 }
+

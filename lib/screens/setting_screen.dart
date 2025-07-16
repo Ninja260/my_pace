@@ -133,7 +133,7 @@ class _SettingScreenState extends State<SettingScreen> {
                   },
                 ),
                 inputSpacer,
-                ElevatedButton(
+                FilledButton(
                   onPressed: () async {
                     if (_formKey.currentState!.validate()) {
                       await _saveSetting();

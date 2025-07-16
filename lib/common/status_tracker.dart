@@ -86,7 +86,7 @@ class StatusTrackerUsesTimer extends ChangeNotifier
     required DateTime time,
     required void Function() function,
   }) {
-    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
       if (!DateTime.now().isBefore(time)) {
         timer.cancel();
         function();
