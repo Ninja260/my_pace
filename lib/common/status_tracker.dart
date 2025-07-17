@@ -23,8 +23,13 @@ class StatusTrackerUsesTimer extends ChangeNotifier
 
   Timer? _timer;
 
+  DateTime? _scheduledTime;
+
   @override
   int get restCount => _restCount;
+
+  @override
+  DateTime? get scheduledTime => _scheduledTime;
 
   @override
   Status get status =>
@@ -51,11 +56,13 @@ class StatusTrackerUsesTimer extends ChangeNotifier
   }
 
   Future<void> _startCoding() async {
+    int codingDuration = await Setting.getCodingDuration();
+    DateTime restTime = DateTime.now().add(Duration(minutes: codingDuration));
+
+    _scheduledTime = restTime;
     _setStatus(Status.coding);
     _audioPlayer?.stop();
 
-    int codingDuration = await Setting.getCodingDuration();
-    DateTime restTime = DateTime.now().add(Duration(minutes: codingDuration));
     _schedule(
       time: restTime,
       function: _startRest,
@@ -68,14 +75,17 @@ class StatusTrackerUsesTimer extends ChangeNotifier
     Status status = currentRestCount % longBreakFrequency == 0
         ? Status.longBreak
         : Status.shortBreak;
-    _setStatus(status);
-
-    _audioPlayer?.resume();
 
     int breakDuration = status == Status.shortBreak
         ? await Setting.getShortBreakDuration()
         : await Setting.getLongBreakDuration();
     DateTime codingTime = DateTime.now().add(Duration(minutes: breakDuration));
+
+    _scheduledTime = codingTime;
+    _setStatus(status);
+
+    _audioPlayer?.resume();
+
     _schedule(
       time: codingTime,
       function: _startCoding,
@@ -172,8 +182,13 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
 
   PermissionStatus _exactAlarmPermissionStatus = PermissionStatus.denied;
 
+  DateTime? _scheduledTime;
+
   @override
   int get restCount => _restCount;
+
+  @override
+  DateTime? get scheduledTime => _scheduledTime;
 
   @override
   Status get status =>
@@ -213,11 +228,13 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
   }
 
   Future<void> _startCoding() async {
+    int codingDuration = await Setting.getCodingDuration();
+    DateTime restTime = DateTime.now().add(Duration(minutes: codingDuration));
+
+    _scheduledTime = restTime;
     _setStatus(Status.coding);
     _audioPlayer?.stop();
 
-    int codingDuration = await Setting.getCodingDuration();
-    DateTime restTime = DateTime.now().add(Duration(minutes: codingDuration));
     _schedule(
       time: restTime,
       status: 'break',
@@ -230,14 +247,17 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
     Status status = currentRestCount % longBreakFrequency == 0
         ? Status.longBreak
         : Status.shortBreak;
-    _setStatus(status);
-
-    _audioPlayer?.resume();
 
     int breakDuration = status == Status.shortBreak
         ? await Setting.getShortBreakDuration()
         : await Setting.getLongBreakDuration();
     DateTime codingTime = DateTime.now().add(Duration(minutes: breakDuration));
+
+    _scheduledTime = codingTime;
+    _setStatus(status);
+
+    _audioPlayer?.resume();
+
     _schedule(
       time: codingTime,
       status: 'coding',

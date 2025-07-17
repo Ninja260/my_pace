@@ -9,4 +9,6 @@ abstract interface class StatusTrackerInterface {
   DateTime? get startTime;
 
   List<StatusLog> get statusLogs;
+
+  DateTime? get scheduledTime;
 }

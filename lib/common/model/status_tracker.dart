@@ -14,11 +14,14 @@ class StatusTracker {
 
   final int restCount;
 
+  final DateTime? scheduledTime;
+
   StatusTracker({
     required this.status,
     required this.startTime,
     required this.statusLogs,
     required this.restCount,
+    required this.scheduledTime,
   });
 
   factory StatusTracker.fromJson(Map<String, dynamic> json) =>
@@ -26,3 +29,4 @@ class StatusTracker {
 
   Map<String, dynamic> toJson() => _$StatusTrackerToJson(this);
 }
+

@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context, snapshot) {
                   String text = Status.needStart.longText;
                   Status status = Status.needStart;
-                  DateTime? startTime;
+                  DateTime? scheduledTime;
                   bool isRunning = false;
 
                   if (snapshot.hasData) {
@@ -87,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     final statusTracker = StatusTracker.fromJson(data['data']);
                     text = statusTracker.status.longText;
                     status = statusTracker.status;
-                    startTime = statusTracker.startTime;
+                    scheduledTime = statusTracker.scheduledTime;
                     isRunning = statusTracker.status != Status.needStart;
                   }
 
@@ -103,8 +103,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (isRunning) ...[
-                        PassedTimeWidget(
-                          startTime: startTime,
+                        RemainingTimeWidget(
+                          scheduledTime: scheduledTime,
                         ),
                         SizedBox(
                           height: textTheme.bodyLarge?.fontSize,
@@ -160,20 +160,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class PassedTimeWidget extends StatefulWidget {
-  const PassedTimeWidget({
+class RemainingTimeWidget extends StatefulWidget {
+  const RemainingTimeWidget({
     super.key,
-    required this.startTime,
+    required this.scheduledTime,
   });
 
-  final DateTime? startTime;
+  final DateTime? scheduledTime;
 
   @override
-  State<PassedTimeWidget> createState() => _PassedTimeWidgetState();
+  State<RemainingTimeWidget> createState() => _RemainingTimeWidgetState();
 }
 
-class _PassedTimeWidgetState extends State<PassedTimeWidget> {
-  Duration _passedTime = Duration.zero;
+class _RemainingTimeWidgetState extends State<RemainingTimeWidget> {
+  Duration _remainingTime = Duration.zero;
   Timer? _timer;
 
   @override
@@ -183,21 +183,25 @@ class _PassedTimeWidgetState extends State<PassedTimeWidget> {
   }
 
   @override
-  void didUpdateWidget(covariant PassedTimeWidget oldWidget) {
+  void didUpdateWidget(covariant RemainingTimeWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.startTime != oldWidget.startTime) {
+    if (widget.scheduledTime != oldWidget.scheduledTime) {
       _stopTimer();
       _startTimer();
     }
   }
 
   void _startTimer() {
-    if (widget.startTime == null) {
+    if (widget.scheduledTime == null) {
       setState(() {
-        _passedTime = Duration.zero;
+        _remainingTime = Duration.zero;
       });
       return;
     }
+
+    setState(() {
+      _remainingTime = widget.scheduledTime!.difference(DateTime.now());
+    });
 
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
@@ -205,7 +209,7 @@ class _PassedTimeWidgetState extends State<PassedTimeWidget> {
         return;
       }
       setState(() {
-        _passedTime = DateTime.now().difference(widget.startTime!);
+        _remainingTime = widget.scheduledTime!.difference(DateTime.now());
       });
     });
   }
@@ -229,7 +233,7 @@ class _PassedTimeWidgetState extends State<PassedTimeWidget> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Text(
-      _formatDuration(_passedTime),
+      _formatDuration(_remainingTime),
       style: textTheme.titleLarge?.copyWith(
         color: colorScheme.onPrimary,
       ),

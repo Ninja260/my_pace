@@ -113,6 +113,7 @@ void onStart(ServiceInstance service) async {
         startTime: statusTracker.startTime,
         statusLogs: statusTracker.statusLogs,
         restCount: statusTracker.restCount,
+        scheduledTime: statusTracker.scheduledTime,
       )
     });
   });
@@ -143,6 +144,7 @@ void onStart(ServiceInstance service) async {
         startTime: statusTracker.startTime,
         statusLogs: statusTracker.statusLogs,
         restCount: statusTracker.restCount,
+        scheduledTime: statusTracker.scheduledTime,
       ),
     });
   });
