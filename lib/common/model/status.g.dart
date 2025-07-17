@@ -1,19 +1,18 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'status_tracker.dart';
+part of 'status.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-StatusTracker _$StatusTrackerFromJson(Map<String, dynamic> json) =>
-    StatusTracker(
-      status: $enumDecode(_$StatusEnumMap, json['status']),
+Status _$StatusFromJson(Map<String, dynamic> json) => Status(
+      state: $enumDecode(_$PersonStateEnumMap, json['state']),
       startTime: json['startTime'] == null
           ? null
           : DateTime.parse(json['startTime'] as String),
-      statusLogs: (json['statusLogs'] as List<dynamic>)
-          .map((e) => StatusLog.fromJson(e as Map<String, dynamic>))
+      stateLogs: (json['stateLogs'] as List<dynamic>)
+          .map((e) => StateLog.fromJson(e as Map<String, dynamic>))
           .toList(),
       restCount: (json['restCount'] as num).toInt(),
       scheduledTime: json['scheduledTime'] == null
@@ -21,18 +20,17 @@ StatusTracker _$StatusTrackerFromJson(Map<String, dynamic> json) =>
           : DateTime.parse(json['scheduledTime'] as String),
     );
 
-Map<String, dynamic> _$StatusTrackerToJson(StatusTracker instance) =>
-    <String, dynamic>{
-      'status': _$StatusEnumMap[instance.status]!,
+Map<String, dynamic> _$StatusToJson(Status instance) => <String, dynamic>{
+      'state': _$PersonStateEnumMap[instance.state]!,
       'startTime': instance.startTime?.toIso8601String(),
-      'statusLogs': instance.statusLogs,
+      'stateLogs': instance.stateLogs,
       'restCount': instance.restCount,
       'scheduledTime': instance.scheduledTime?.toIso8601String(),
     };
 
-const _$StatusEnumMap = {
-  Status.needStart: 'needStart',
-  Status.coding: 'coding',
-  Status.shortBreak: 'shortBreak',
-  Status.longBreak: 'longBreak',
+const _$PersonStateEnumMap = {
+  PersonState.needStart: 'needStart',
+  PersonState.coding: 'coding',
+  PersonState.shortBreak: 'shortBreak',
+  PersonState.longBreak: 'longBreak',
 };

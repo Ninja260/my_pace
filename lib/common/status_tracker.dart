@@ -5,19 +5,17 @@ import 'dart:ui';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/foundation.dart';
-import 'package:json_annotation/json_annotation.dart';
-import 'package:my_pace/common/enums/status.dart';
+import 'package:my_pace/common/enums/person_state.dart';
 import 'package:my_pace/common/interfaces/status_tracker_for_service.interface.dart';
+import 'package:my_pace/common/model/state_log.dart';
 import 'package:my_pace/stores/setting.dart';
 import 'package:permission_handler/permission_handler.dart';
-
-part 'status_tracker.g.dart';
 
 class StatusTrackerUsesTimer extends ChangeNotifier
     implements StatusTrackerForServiceInterface {
   AudioPlayer? _audioPlayer;
 
-  final List<StatusLog> _statusLogs = [];
+  final List<StateLog> _statusLogs = [];
 
   int _restCount = 0;
 
@@ -32,15 +30,15 @@ class StatusTrackerUsesTimer extends ChangeNotifier
   DateTime? get scheduledTime => _scheduledTime;
 
   @override
-  Status get status =>
-      _statusLogs.isNotEmpty ? _statusLogs.last.status : Status.needStart;
+  PersonState get status =>
+      _statusLogs.isNotEmpty ? _statusLogs.last.state : PersonState.needStart;
 
   @override
   DateTime? get startTime =>
       _statusLogs.isNotEmpty ? _statusLogs.first.time : null;
 
   @override
-  List<StatusLog> get statusLogs => _statusLogs;
+  List<StateLog> get statusLogs => _statusLogs;
 
   @override
   void start() {
@@ -60,7 +58,7 @@ class StatusTrackerUsesTimer extends ChangeNotifier
     DateTime restTime = DateTime.now().add(Duration(minutes: codingDuration));
 
     _scheduledTime = restTime;
-    _setStatus(Status.coding);
+    _setStatus(PersonState.coding);
     _audioPlayer?.stop();
 
     _schedule(
@@ -72,11 +70,11 @@ class StatusTrackerUsesTimer extends ChangeNotifier
   void _startRest() async {
     int longBreakFrequency = await Setting.getShortBreaksBeforeLongBreak() + 1;
     int currentRestCount = restCount + 1;
-    Status status = currentRestCount % longBreakFrequency == 0
-        ? Status.longBreak
-        : Status.shortBreak;
+    PersonState status = currentRestCount % longBreakFrequency == 0
+        ? PersonState.longBreak
+        : PersonState.shortBreak;
 
-    int breakDuration = status == Status.shortBreak
+    int breakDuration = status == PersonState.shortBreak
         ? await Setting.getShortBreakDuration()
         : await Setting.getLongBreakDuration();
     DateTime codingTime = DateTime.now().add(Duration(minutes: breakDuration));
@@ -114,22 +112,22 @@ class StatusTrackerUsesTimer extends ChangeNotifier
         .setSource(AssetSource('music/relaxing-piano-music-272714.mp3'));
   }
 
-  void _setStatus(Status status) {
-    if (status == Status.needStart) {
+  void _setStatus(PersonState status) {
+    if (status == PersonState.needStart) {
       _clear();
       return;
     }
 
     _statusLogs.add(
-      StatusLog(
-        status: status,
+      StateLog(
+        state: status,
         time: DateTime.now(),
       ),
     );
 
     switch (status) {
-      case Status.shortBreak:
-      case Status.longBreak:
+      case PersonState.shortBreak:
+      case PersonState.longBreak:
         _restCount++;
         break;
       default:
@@ -176,7 +174,7 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
 
   AudioPlayer? _audioPlayer;
 
-  final List<StatusLog> _statusLogs = [];
+  final List<StateLog> _statusLogs = [];
 
   int _restCount = 0;
 
@@ -191,15 +189,15 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
   DateTime? get scheduledTime => _scheduledTime;
 
   @override
-  Status get status =>
-      _statusLogs.isNotEmpty ? _statusLogs.last.status : Status.needStart;
+  PersonState get status =>
+      _statusLogs.isNotEmpty ? _statusLogs.last.state : PersonState.needStart;
 
   @override
   DateTime? get startTime =>
       _statusLogs.isNotEmpty ? _statusLogs.first.time : null;
 
   @override
-  List<StatusLog> get statusLogs => _statusLogs;
+  List<StateLog> get statusLogs => _statusLogs;
 
   @override
   void start() {
@@ -232,7 +230,7 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
     DateTime restTime = DateTime.now().add(Duration(minutes: codingDuration));
 
     _scheduledTime = restTime;
-    _setStatus(Status.coding);
+    _setStatus(PersonState.coding);
     _audioPlayer?.stop();
 
     _schedule(
@@ -244,11 +242,11 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
   void _startRest() async {
     int longBreakFrequency = await Setting.getShortBreaksBeforeLongBreak() + 1;
     int currentRestCount = restCount + 1;
-    Status status = currentRestCount % longBreakFrequency == 0
-        ? Status.longBreak
-        : Status.shortBreak;
+    PersonState status = currentRestCount % longBreakFrequency == 0
+        ? PersonState.longBreak
+        : PersonState.shortBreak;
 
-    int breakDuration = status == Status.shortBreak
+    int breakDuration = status == PersonState.shortBreak
         ? await Setting.getShortBreakDuration()
         : await Setting.getLongBreakDuration();
     DateTime codingTime = DateTime.now().add(Duration(minutes: breakDuration));
@@ -313,21 +311,21 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
         .setSource(AssetSource('music/relaxing-piano-music-272714.mp3'));
   }
 
-  void _setStatus(Status status) {
-    if (status == Status.needStart) {
+  void _setStatus(PersonState status) {
+    if (status == PersonState.needStart) {
       throw '';
     }
 
     _statusLogs.add(
-      StatusLog(
-        status: status,
+      StateLog(
+        state: status,
         time: DateTime.now(),
       ),
     );
 
     switch (status) {
-      case Status.shortBreak:
-      case Status.longBreak:
+      case PersonState.shortBreak:
+      case PersonState.longBreak:
         _restCount++;
         break;
       default:
@@ -348,20 +346,4 @@ class StatusTrackerUsesAlarmManager extends ChangeNotifier
     AndroidAlarmManager.cancel(0);
     AndroidAlarmManager.cancel(1);
   }
-}
-
-@JsonSerializable()
-class StatusLog {
-  final Status status;
-  final DateTime time;
-
-  StatusLog({
-    required this.status,
-    required this.time,
-  });
-
-  factory StatusLog.fromJson(Map<String, dynamic> json) =>
-      _$StatusLogFromJson(json);
-
-  Map<String, dynamic> toJson() => _$StatusLogToJson(this);
 }

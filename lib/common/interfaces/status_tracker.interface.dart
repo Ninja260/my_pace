@@ -1,14 +1,14 @@
-import 'package:my_pace/common/enums/status.dart';
-import 'package:my_pace/common/status_tracker.dart';
+import 'package:my_pace/common/enums/person_state.dart';
+import 'package:my_pace/common/model/state_log.dart';
 
 abstract interface class StatusTrackerInterface {
   int get restCount;
 
-  Status get status;
+  PersonState get status;
 
   DateTime? get startTime;
 
-  List<StatusLog> get statusLogs;
+  List<StateLog> get statusLogs;
 
   DateTime? get scheduledTime;
 }

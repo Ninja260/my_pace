@@ -9,7 +9,7 @@ android {
     namespace = 'com.example.my_pace'
     compileSdk = flutter.compileSdkVersion
     // ndkVersion = flutter.ndkVersion
-    ndkVersion = "27.0.12077973"
+    ndkVersion = '27.0.12077973'
 
     compileOptions {
         // Flag to enable support for the new language APIs
@@ -46,13 +46,13 @@ android {
     productFlavors {
         timer {
             dimension 'default'
-            resValue 'string', 'app_name', 'My Pace'
+            resValue 'string', 'app_name', 'My Pace(Timer)'
         // applicatonIdSuffix '.service'
         }
 
         alarm {
             dimension 'default'
-            resValue 'string', 'app_name', 'My Pace'
+            resValue 'string', 'app_name', 'My Pace(Alarm)'
         // applicatonIdSuffix '.service'
         }
     }

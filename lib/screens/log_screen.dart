@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:my_pace/common/model/status_tracker.dart';
-import 'package:my_pace/common/status_tracker.dart';
+import 'package:my_pace/common/model/state_log.dart';
+import 'package:my_pace/common/model/status.dart';
 
 class LogScreen extends StatefulWidget {
   const LogScreen({super.key});
@@ -30,10 +30,10 @@ class _LogScreenState extends State<LogScreen> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final data = snapshot.data!;
-            final statusTracker = StatusTracker.fromJson(data['data']);
+            final statusTracker = Status.fromJson(data['data']);
 
-            List<StatusLog> statusLogs = statusTracker.statusLogs;
-            int itemCount = statusLogs.length;
+            List<StateLog> stateLogs = statusTracker.stateLogs;
+            int itemCount = stateLogs.length;
 
             DateTime? lastDateTime;
 
@@ -42,13 +42,13 @@ class _LogScreenState extends State<LogScreen> {
               itemBuilder: (context, index) {
                 String escapedMinutes = '';
                 if (lastDateTime != null) {
-                  escapedMinutes = (statusLogs[index]
+                  escapedMinutes = (stateLogs[index]
                           .time
                           .difference(lastDateTime!)
                           .inMinutes)
                       .toString();
                 }
-                lastDateTime = statusLogs[index].time;
+                lastDateTime = stateLogs[index].time;
 
                 return Padding(
                   padding: const EdgeInsets.symmetric(
@@ -60,7 +60,7 @@ class _LogScreenState extends State<LogScreen> {
                     children: [
                       RichText(
                         text: TextSpan(
-                          text: statusLogs[index].status.shortText,
+                          text: stateLogs[index].state.shortText,
                           style: TextStyle(
                             color: Colors.black,
                           ),
@@ -76,7 +76,7 @@ class _LogScreenState extends State<LogScreen> {
                         ),
                       ),
                       Text(
-                        statusLogs[index].time.toString().split('.')[0],
+                        stateLogs[index].time.toString().split('.')[0],
                         style: TextStyle(
                           color: Colors.black54,
                         ),

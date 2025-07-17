@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 
 @JsonEnum()
-enum Status {
+enum PersonState {
   needStart,
   coding,
   shortBreak,
@@ -9,28 +9,27 @@ enum Status {
 
   String get longText {
     switch (this) {
-      case Status.needStart:
+      case PersonState.needStart:
         return "Let's start coding!";
-      case Status.coding:
+      case PersonState.coding:
         return 'Coding';
-      case Status.shortBreak:
+      case PersonState.shortBreak:
         return 'Taking a break';
-      case Status.longBreak:
+      case PersonState.longBreak:
         return 'Taking a long break';
     }
   }
 
   String get shortText {
     switch (this) {
-      case Status.needStart:
+      case PersonState.needStart:
         return 'Need Start';
-      case Status.coding:
+      case PersonState.coding:
         return 'Coding';
-      case Status.shortBreak:
+      case PersonState.shortBreak:
         return 'Short Break';
-      case Status.longBreak:
+      case PersonState.longBreak:
         return 'Long Break';
     }
   }
 }
-

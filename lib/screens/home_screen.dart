@@ -2,8 +2,8 @@ import 'dart:async' show Timer;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_background_service/flutter_background_service.dart';
-import 'package:my_pace/common/enums/status.dart';
-import 'package:my_pace/common/model/status_tracker.dart';
+import 'package:my_pace/common/enums/person_state.dart';
+import 'package:my_pace/common/model/status.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -42,8 +42,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
               if (snapshot.hasData) {
                 final data = snapshot.data!;
-                final statusTracker = StatusTracker.fromJson(data['data']);
-                isRunning = statusTracker.status != Status.needStart;
+                final statusTracker = Status.fromJson(data['data']);
+                isRunning = statusTracker.state != PersonState.needStart;
               }
 
               return Row(
@@ -77,23 +77,23 @@ class _HomeScreenState extends State<HomeScreen> {
               child: StreamBuilder<Map<String, dynamic>?>(
                 stream: FlutterBackgroundService().on('update'),
                 builder: (context, snapshot) {
-                  String text = Status.needStart.longText;
-                  Status status = Status.needStart;
+                  String text = PersonState.needStart.longText;
+                  PersonState state = PersonState.needStart;
                   DateTime? scheduledTime;
                   bool isRunning = false;
 
                   if (snapshot.hasData) {
                     final data = snapshot.data!;
-                    final statusTracker = StatusTracker.fromJson(data['data']);
-                    text = statusTracker.status.longText;
-                    status = statusTracker.status;
+                    final statusTracker = Status.fromJson(data['data']);
+                    text = statusTracker.state.longText;
+                    state = statusTracker.state;
                     scheduledTime = statusTracker.scheduledTime;
-                    isRunning = statusTracker.status != Status.needStart;
+                    isRunning = statusTracker.state != PersonState.needStart;
                   }
 
                   late IconData buttonIcon;
 
-                  if (status == Status.needStart) {
+                  if (state == PersonState.needStart) {
                     buttonIcon = Icons.play_arrow;
                   } else {
                     buttonIcon = Icons.pause;
